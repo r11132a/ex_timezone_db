@@ -29,7 +29,7 @@ ExTimezoneDB relies on HTTPoison and Poison for http requests and json parsing, 
 In `config.exs`
 ```elixir
   
-  config :ex_timezone_db,key: YOUR_API_KEY
+  config :ex_timezone_db,api_key: YOUR_API_KEY
 
 ```
 

@@ -4,7 +4,7 @@ defmodule ExTimezoneDB do
   interface.
   """
   # It's an attribute, since it SHOULDN'T change during execution
-  @key Application.get_env(:ex_timezone_db, :key)
+  @key Application.get_env(:ex_timezone_db, :api_key)
 
   # Non premium TimezoneDB URL for version v2.1
   @timezonedb_url "http://api.timezonedb.com/v2.1"
