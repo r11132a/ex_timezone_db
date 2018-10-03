@@ -1,21 +1,43 @@
-# ExTimezoneDb
+# ExTimezoneDB
 
-**TODO: Add description**
+**ExTimezoneDB is a simple interface to the [TimeZoneDB](https://www.timezonedb.com) REST API**
+
+Currently, only two functions are available:
+* `get_timezone_by_name` Which is used to find timezone information by name\(ie "America/New\_York\)
+* `get_timezone_by_position` Which is used to find timezone information by latitude and longitude
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `ex_timezone_db` to your list of dependencies in `mix.exs`:
+Add ExTimezoneDB to your `mix.exs`:
 
 ```elixir
-def deps do
-  [
-    {:ex_timezone_db, "~> 0.1.0"}
-  ]
-end
+  
+  defp deps do
+    [
+      {:ex_timezone_db, github: "r11132a/ex_timezone_db", branch: "master"}
+    ]
+
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/ex_timezone_db](https://hexdocs.pm/ex_timezone_db).
+## Dependancies
+
+ExTimezoneDB relys on HTTPoison and Poison for http requests and json parsing, respectivly.
+
+
+## Usage
+
+In `config.exs`
+```elixir
+  
+  config :ex_timezone_db,key: YOUR_API_KEY
+
+```
+
+In your code:
+
+```elixir
+
+  {:ok,timezone_info} = ExTimezoneDB.get_timezone_by_name("America/New_York")
+
+```
 
