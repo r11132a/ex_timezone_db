@@ -18,9 +18,27 @@ defmodule ExTimezoneDbTest do
     # "formatted": "2018-10-03 10:41:37"
   }
 
+  @valid_latitude 34.0201613
+  @valid_longitude -118.6919136
+  @america_los_angeles_valid_response %{
+    "countryCode" => "US",
+    "countryName" => "United States",
+    "zoneName" => "America/Los_Angeles",
+    "abbreviation" => "PDT",
+    "gmtOffset" => -25200,
+    "dst" => "1",
+    "nextAbbreviation" => "PST"
+  }
+
   @invalid_zone_name "America/New_Amsterdam"
 
-  test "Should get info for America/New_York" do
+  # Since non-premium account must wait a second between requests, call
+  # Process.sleep between tests, and keep one request per test
+  setup do
+    Process.sleep(1000)
+  end
+
+  test "Should get info for America/New_York by name" do
     {:ok, results} = ExTimezoneDB.get_timezone_by_name(@valid_zone_name)
 
     compare_me =
@@ -36,5 +54,19 @@ defmodule ExTimezoneDbTest do
   test "Should return error for invalid Zone name" do
     results = ExTimezoneDB.get_timezone_by_name(@invalid_zone_name)
     assert results == {:error, "FAILED - Record not found."}
+  end
+
+  test "Should get info for America/Los_Angeles by position" do
+    {:ok, results} =
+      ExTimezoneDB.get_timezone_by_position(@valid_latitude, @valid_longitude)
+
+    compare_me =
+      @america_los_angeles_valid_response
+      |> Map.put("zoneStart", results["zoneStart"])
+      |> Map.put("zoneEnd", results["zoneEnd"])
+      |> Map.put("timestamp", results["timestamp"])
+      |> Map.put("formatted", results["formatted"])
+
+    assert results == compare_me
   end
 end
