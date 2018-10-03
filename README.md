@@ -3,7 +3,7 @@
 **ExTimezoneDB is a simple interface to the [TimeZoneDB](https://www.timezonedb.com) REST API**
 
 Currently, only two functions are available:
-* `get_timezone_by_name` Which is used to find timezone information by name\(ie "America/New\_York\)
+* `get_timezone_by_name` Which is used to find timezone information by name\(ie "America/New\_York"\)
 * `get_timezone_by_position` Which is used to find timezone information by latitude and longitude
 
 ## Installation
@@ -19,9 +19,9 @@ Add ExTimezoneDB to your `mix.exs`:
 
 ```
 
-## Dependancies
+## Dependencies
 
-ExTimezoneDB relys on HTTPoison and Poison for http requests and json parsing, respectivly.
+ExTimezoneDB relies on HTTPoison and Poison for http requests and json parsing, respectivly.
 
 
 ## Usage
