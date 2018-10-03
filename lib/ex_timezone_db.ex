@@ -11,11 +11,11 @@ defmodule ExTimezoneDB do
   # Premium TimezoneDB URL for version v2.1
   # @premium_timezonedb_url "http://vip.timezonedb.com/v2.1"
 
-  def get_timezonedb_url() do
+  defp get_timezonedb_url() do
     @timezonedb_url
   end
 
-  def get_gettimezone_url() do
+  defp get_gettimezone_url() do
     get_timezonedb_url() <> "/get-time-zone?key=#{@key}&format=json"
   end
 
@@ -23,7 +23,7 @@ defmodule ExTimezoneDB do
     get_gettimezone_url() <> "&by=zone&zone=#{name}"
   end
 
-  def process_body(body) do
+  defp process_body(body) do
     case body["status"] do
       "OK" ->
         clean_body =

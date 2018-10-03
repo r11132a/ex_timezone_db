@@ -18,7 +18,9 @@ defmodule ExTimezoneDbTest do
     # "formatted": "2018-10-03 10:41:37"
   }
 
-  test "should get info for America/New_York" do
+  @invalid_zone_name "America/New_Amsterdam"
+
+  test "Should get info for America/New_York" do
     {:ok, results} = ExTimezoneDB.get_timezone_by_name(@valid_zone_name)
 
     compare_me =
@@ -29,5 +31,10 @@ defmodule ExTimezoneDbTest do
       |> Map.put("formatted", results["formatted"])
 
     assert results == compare_me
+  end
+
+  test "Should return error for invalid Zone name" do
+    results = ExTimezoneDB.get_timezone_by_name(@invalid_zone_name)
+    assert results == {:error, "FAILED - Record not found."}
   end
 end
