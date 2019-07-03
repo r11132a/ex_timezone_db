@@ -32,6 +32,13 @@ In `config.exs`
   config :ex_timezone_db,api_key: YOUR_API_KEY
 
 ```
+The following is optional (defaults to false), but should be set if you have
+a Premium key (value is a boolean)
+```elixir
+
+  config :ex_timezone_db, premium: true
+
+```
 
 In your code:
 

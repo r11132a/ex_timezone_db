@@ -21,6 +21,20 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
+# Required Config values:
+#
+#     api_key : string
+#
+# config :ex_timezone_db, api_key: "MYAPIKEY"
+#
+# Optional Config values:
+#
+#     premium : boolean
+#     (assumed false if absent)
+#
+# config :ex_timezone_db, premium: false
+#
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.

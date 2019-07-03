@@ -1,7 +1,7 @@
 defmodule ExTimezoneDB do
   @moduledoc """
   Provides an elixir interface to the TimeZoneDB (https://timezonedb.com)
-  interface.
+  service.
   """
   # It's an attribute, since it SHOULDN'T change during execution
   @key Application.get_env(:ex_timezone_db, :api_key)
@@ -9,9 +9,16 @@ defmodule ExTimezoneDB do
   # Non premium TimezoneDB URL for version v2.1
   @timezonedb_url "http://api.timezonedb.com/v2.1"
   # Premium TimezoneDB URL for version v2.1
-  # @premium_timezonedb_url "http://vip.timezonedb.com/v2.1"
+  @premium_timezonedb_url "http://vip.timezonedb.com/v2.1"
 
-  defp get_timezonedb_url(), do: @timezonedb_url
+  # Note: This isn't an attributes mostly for testing...so we can switch 
+  # between keys.  The overhead is low enough that it shouldn't be a problem.
+  defp get_timezonedb_url() do
+    case Application.get_env(:ex_timezone_db, :premium, false) do
+      true -> @premium_timezonedb_url
+      false -> @timezonedb_url
+    end
+  end
 
   defp get_gettimezone_url(),
     do: get_timezonedb_url() <> "/get-time-zone?key=#{@key}&format=json"
