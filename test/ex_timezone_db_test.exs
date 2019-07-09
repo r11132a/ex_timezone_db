@@ -2,6 +2,8 @@ defmodule ExTimezoneDbTest do
   use ExUnit.Case, async: false
   doctest ExTimezoneDB
 
+  alias ExTimezoneDB.Timezone
+
   @valid_zone_name "America/New_York"
   @america_new_york_valid_response %{
     "countryCode" => "US",
@@ -17,6 +19,10 @@ defmodule ExTimezoneDbTest do
     # "timestamp": 1538563297,
     # "formatted": "2018-10-03 10:41:37"
   }
+
+  @america_new_york_valid_struct Timezone.from_json(
+                                   @america_new_york_valid_response
+                                 )
 
   # Premium adds values
   @america_new_york_valid_premium_responses %{
@@ -42,11 +48,81 @@ defmodule ExTimezoneDbTest do
     "regionName" => "California"
   }
 
+  # Valid results for getting timezone by city
+  @valid_city_name "Tampa"
+  @valid_country_code "US"
+
+  @valid_tampa_city_results %{
+    "currentPage" => 1,
+    "totalPage" => 1,
+    "zones" => [
+      %{
+        "abbreviation" => "MDT",
+        "cityName" => "Tampa",
+        "countryCode" => "US",
+        "countryName" => "United States",
+        "dst" => "1",
+        "gmtOffset" => -21600,
+        "nextAbbreviation" => "MST",
+        "regionName" => "Colorado",
+        "zoneName" => "America/Denver"
+      },
+      %{
+        "abbreviation" => "EDT",
+        "cityName" => "Tampa",
+        "countryCode" => "US",
+        "countryName" => "United States",
+        "dst" => "1",
+        "gmtOffset" => -14400,
+        "nextAbbreviation" => "EST",
+        "regionName" => "Florida",
+        "zoneName" => "America/New_York"
+      },
+      %{
+        "abbreviation" => "CDT",
+        "cityName" => "Tampa",
+        "countryCode" => "US",
+        "countryName" => "United States",
+        "dst" => "1",
+        "gmtOffset" => -18000,
+        "nextAbbreviation" => "CST",
+        "regionName" => "Kansas",
+        "zoneName" => "America/Chicago"
+      }
+    ]
+  }
+
   @invalid_zone_name "America/New_Amsterdam"
 
   # Tag for simplicity in setting up which tests to skip
-  @premium Application.get_env(:ex_timezone_db, :premium, false)
+  # @premium Application.get_env(:ex_timezone_db, :premium, false)
+  @premium ExTimezoneDB.get_premium()
   @notpremium !@premium
+
+  # So we don't have to keep copying zoneStart, zoneEnd, timestamp, and 
+  # formatted into the known valid responses
+  defp compare_zone_values(known_valid_values, returned_zone)
+       when is_map(returned_zone) do
+    known_valid_values
+    |> Map.keys()
+    |> Enum.all?(fn key_name ->
+      known_valid_values[key_name] == returned_zone[key_name]
+    end)
+  end
+
+  # For structs (not going to cut it on premium tests)
+  defp compare_zone_values_struct(known_valid_values, returned_zone) do
+    known_valid_values["abbreviation"] == returned_zone.abbreviation and
+      known_valid_values["cityName"] == returned_zone.city_name and
+      known_valid_values["countryCode"] == returned_zone.country_code and
+      known_valid_values["countryName"] == returned_zone.country_name and
+      known_valid_values["dst"] == returned_zone.dst and
+      known_valid_values["gmtOffset"] == returned_zone.gmt_offset and
+      known_valid_values["regionName"] == returned_zone.region_name and
+      known_valid_values["zoneName"] == returned_zone.zone_name and
+      known_valid_values["nextAbbreviation"] ==
+        returned_zone.next_abbreviation
+  end
 
   # Since non-premium account must wait a second between requests, call
   # Process.sleep between tests, and keep one request per test
@@ -92,6 +168,41 @@ defmodule ExTimezoneDbTest do
 
       assert results == compare_me
     end
+
+    @tag skip: @notpremium
+    test "Get timezone by city name -- premium" do
+      {:ok, results} =
+        ExTimezoneDB.get_timezone_by_city(
+          @valid_city_name,
+          @valid_country_code
+        )
+
+      assert @valid_tampa_city_results["currentPage"] ==
+               results["currentPage"]
+
+      assert @valid_tampa_city_results["totalPage"] == results["totalPage"]
+
+      assert length(@valid_tampa_city_results["zones"]) ==
+               length(results["zones"])
+
+      # Running under the (probably) bad assumption that the list will always
+      # be in the same order.  This should probably be replaced with some kind
+      # of get_in/2 (or other) magic
+      assert compare_zone_values(
+               Enum.at(@valid_tampa_city_results["zones"], 0),
+               Enum.at(results["zones"], 0)
+             )
+
+      assert compare_zone_values(
+               Enum.at(@valid_tampa_city_results["zones"], 1),
+               Enum.at(results["zones"], 1)
+             )
+
+      assert compare_zone_values(
+               Enum.at(@valid_tampa_city_results["zones"], 2),
+               Enum.at(results["zones"], 2)
+             )
+    end
   end
 
   describe "Non premium tests" do
@@ -107,6 +218,16 @@ defmodule ExTimezoneDbTest do
         |> Map.put("formatted", results["formatted"])
 
       assert results == compare_me
+    end
+
+    @tag skip: @premium
+    test "Get Timezone by Name using struct" do
+      {:ok, result_struct} = ExTimezoneDB.get_by_zone(@valid_zone_name)
+
+      assert compare_zone_values_struct(
+               @america_new_york_valid_response,
+               result_struct
+             )
     end
 
     @tag skip: @premium
@@ -132,6 +253,20 @@ defmodule ExTimezoneDbTest do
     test "Should return error for invalid Zone name" do
       results = ExTimezoneDB.get_timezone_by_name(@invalid_zone_name)
       assert results == {:error, "FAILED - Record not found."}
+    end
+
+    test "Should return an error for nil as a zone name" do
+      results = ExTimezoneDB.get_timezone_by_name(nil)
+      assert results == {:error, "Zone Name cannot be nil"}
+    end
+
+    test "Get by zone using zone name" do
+      {:ok, timezone} = ExTimezoneDB.get_by_zone(@valid_zone_name)
+
+      assert timezone ==
+               struct(@america_new_york_valid_struct,
+                 timestamp: timezone.timestamp
+               )
     end
   end
 end
