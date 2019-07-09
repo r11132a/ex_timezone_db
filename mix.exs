@@ -22,7 +22,7 @@ defmodule ExTimezoneDb.MixProject do
   defp deps do
     [
       {:credo, "~> 0.10.2", only: :dev},
-      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:httpoison, "~> 1.1.0"},
       {:poison, "~> 4.0.0"}
     ]
