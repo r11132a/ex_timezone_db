@@ -25,6 +25,11 @@ ex_timezone_db-*.tar
 # What's in my config/test.exs file is none of your business 8-)
 config/test.exs
 
+# Don't need anymore info from my config/config.exs file
+/config/config.exs
+
+/config/dev.exs
+
 # No Vim/gVim backup files
 *~
 
