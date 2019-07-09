@@ -1,10 +1,14 @@
 # ExTimezoneDB
 
+https://api.travis-ci.org/r11132a/ex_timezone_db.svg?branch=master
+
 **ExTimezoneDB is a simple interface to the [TimeZoneDB](https://www.timezonedb.com) REST API**
 
-Currently, only two functions are available:
+Currently, only three functions are available:
 * `get_timezone_by_name` Which is used to find timezone information by name\(ie "America/New\_York"\)
 * `get_timezone_by_position` Which is used to find timezone information by latitude and longitude
+* `get_timezone_by_city` Which is used to find timezone(s) by using the name of
+the city.  Potentially returns mutliple time zones.
 
 ## Installation
 
