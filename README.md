@@ -1,6 +1,6 @@
 # ExTimezoneDB
 
-![Travis CI Build Status](https://api.travis-ci.org/r11132a/ex_timezone_db.svg?branch=master)
+![Travis CI Build Status](https://api.travis-ci.org/r11132a/ex_timezone_db.svg?branch=master "Travis CI Build Status")
 
 **ExTimezoneDB is a simple interface to the [TimeZoneDB](https://www.timezonedb.com) REST API**
 
