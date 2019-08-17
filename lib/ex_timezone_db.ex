@@ -15,25 +15,25 @@ defmodule ExTimezoneDB do
 
   # Since premium config value may be set via an environment variable, this'll
   # make sure only a boolean value is returned
-  # The old version of this function had it's job replaced via a simplier 
-  # function actually in the config file.  Don't REALLY need this, but it's 
+  # The old version of this function had it's job replaced via a simplier
+  # function actually in the config file.  Don't REALLY need this, but it's
   # easier than typing the Application.get_env over and over again...
-  def get_premium(), do: Application.get_env(:ex_timezone_db, :premium, false)
+  def get_premium, do: Application.get_env(:ex_timezone_db, :premium, false)
 
-  # This came into being debugging some environment variable wierdness in 
+  # This came into being debugging some environment variable wierdness in
   # Windows.  May be removed, don't count on it staying around.
-  def get_key(), do: Application.get_env(:ex_timezone_db, :api_key)
+  def get_key, do: Application.get_env(:ex_timezone_db, :api_key)
 
-  # Choose API endpoint based on whether or not a premium key is used.  
-  defp get_timezonedb_url() do
+  # Choose API endpoint based on whether or not a premium key is used.
+  defp get_timezonedb_url do
     case get_premium() do
       true -> @premium_timezonedb_url
       false -> @timezonedb_url
     end
   end
 
-  # Starting point for the get-time-zone family of functions.  
-  defp get_gettimezone_url() do
+  # Starting point for the get-time-zone family of functions.
+  defp get_gettimezone_url do
     key = get_key()
     get_timezonedb_url() <> "/get-time-zone?key=#{key}&format=json"
   end
@@ -121,7 +121,7 @@ defmodule ExTimezoneDB do
   end
 
   @doc """
-  Start of the migration to the new struct based calls.
+  Start of the migration to the new struct based calls.  See [Timezone](ExTimezoneDB.Timezone.html)
 
   Accepts a string that is a valid time zone name (ie "America/New_York") or
   abbreviation ("EST") and returns a tuple indicating success/failure tuple.
@@ -133,7 +133,6 @@ defmodule ExTimezoneDB do
   Failure will be of the form:
 
     {: error, "status - message" }
-
 
   NOTE:  When using a non-premium license key from TimezoneDB, requests **must**
   be at least 1 second apart.  This is your responsibility!
@@ -233,6 +232,24 @@ defmodule ExTimezoneDB do
       {:error, reason} -> {:error, reason}
     end
   end
+
+ @doc """
+  Start of the migration to the new struct based calls.  See [Timezone](ExTimezoneDB.Timezone.html)
+
+  Accepts a string that is a valid city name (ie "Tampa") and a valid
+  ISO 3611-1 alpha-2 code and returns a tuple indicating success/failure.
+
+  For success tuple will be:
+
+    { :ok, [ExTimezoneDB.Timezone.t] }
+
+  Failure will be of the form:
+
+    {: error, "status - message" }
+
+  NOTE:  This is a Premium function.  You must have a Premium key from 
+  TimezoneDB
+  """
 
   def get_by_city(city, country) do
     city

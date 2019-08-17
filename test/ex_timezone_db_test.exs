@@ -62,7 +62,7 @@ defmodule ExTimezoneDbTest do
         "countryCode" => "US",
         "countryName" => "United States",
         "dst" => "1",
-        "gmtOffset" => -21600,
+        "gmtOffset" => -21_600,
         "nextAbbreviation" => "MST",
         "regionName" => "Colorado",
         "zoneName" => "America/Denver"
@@ -73,7 +73,7 @@ defmodule ExTimezoneDbTest do
         "countryCode" => "US",
         "countryName" => "United States",
         "dst" => "1",
-        "gmtOffset" => -14400,
+        "gmtOffset" => -14_400,
         "nextAbbreviation" => "EST",
         "regionName" => "Florida",
         "zoneName" => "America/New_York"
@@ -84,7 +84,7 @@ defmodule ExTimezoneDbTest do
         "countryCode" => "US",
         "countryName" => "United States",
         "dst" => "1",
-        "gmtOffset" => -18000,
+        "gmtOffset" => -18_000,
         "nextAbbreviation" => "CST",
         "regionName" => "Kansas",
         "zoneName" => "America/Chicago"
@@ -99,7 +99,7 @@ defmodule ExTimezoneDbTest do
   @premium ExTimezoneDB.get_premium()
   @notpremium !@premium
 
-  # So we don't have to keep copying zoneStart, zoneEnd, timestamp, and 
+  # So we don't have to keep copying zoneStart, zoneEnd, timestamp, and
   # formatted into the known valid responses
   defp compare_zone_values(known_valid_values, returned_zone)
        when is_map(returned_zone) do
@@ -110,10 +110,21 @@ defmodule ExTimezoneDbTest do
     end)
   end
 
-  # For structs (not going to cut it on premium tests)
+  defp cleanup_json(json_data) do
+    cmp_fn = fn x ->
+      if x == "", do: nil, else: x
+    end
+
+    json_data
+    |> Map.update("cityName", nil, cmp_fn)
+    |> Map.update("regionName", nil, cmp_fn)
+  end
+
+  # For structs
   defp compare_zone_values_struct(known_valid_values, returned_zone) do
+    known_valid_values = cleanup_json(known_valid_values)
+
     known_valid_values["abbreviation"] == returned_zone.abbreviation and
-      known_valid_values["cityName"] == returned_zone.city_name and
       known_valid_values["countryCode"] == returned_zone.country_code and
       known_valid_values["countryName"] == returned_zone.country_name and
       known_valid_values["dst"] == returned_zone.dst and
@@ -148,6 +159,15 @@ defmodule ExTimezoneDbTest do
         |> Map.merge(@america_new_york_valid_premium_responses)
 
       assert results == compare_me
+    end
+
+    @tag skip: @notpremium
+    test "Struct based get_by_zone" do
+      {:ok, results} = ExTimezoneDB.get_by_zone(@valid_zone_name)
+
+      assert @america_new_york_valid_response
+             |> Map.merge(@america_new_york_valid_premium_responses)
+             |> compare_zone_values_struct(results)
     end
 
     @tag skip: @notpremium

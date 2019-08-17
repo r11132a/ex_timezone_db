@@ -4,8 +4,8 @@ defmodule ExTimezoneDB.Timezone do
   data from the TimezoneDB service.
 
   TimezoneDB returns for each zone
-  - countryCode (as a string)
-  - countryName (as ISO 3166-1 alpha-2 codes (2 letter codes))
+  - countryName (as a string)
+  - countryCode (as ISO 3166-1 alpha-2 codes (2 letter codes))
   - zoneName  (as a string representing the IANA time zone database entries)
   - abbreviation (as the one to four letter abbreviation of the zone)
   - nextAbbreviation (as the one to four letter abbreviation of the next zone)
@@ -23,7 +23,6 @@ defmodule ExTimezoneDB.Timezone do
   - cityName
   - regionName
 
-
   These are packaged into a struct with the following fields
   - country_code
   - country_name
@@ -36,7 +35,6 @@ defmodule ExTimezoneDB.Timezone do
   - city_name
   - region_name
 
-
   """
   defstruct [
     :country_code,
@@ -47,9 +45,8 @@ defmodule ExTimezoneDB.Timezone do
     :dst,
     :next_abbreviation,
     :timestamp,
-    # These last two are only populated for premium
+    # These last two are only populated for premium requests
     :city_name,
-    # requests
     :region_name
   ]
 
